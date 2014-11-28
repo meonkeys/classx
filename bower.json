@@ -1,0 +1,24 @@
+{
+  "name": "classx",
+  "description": "Extends JavaScript with a simple to use Class pattern.",
+  "version": "1.0.0",
+  "main": [
+    "lib/js/classx.min.js"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "package.json",
+    "package.js",
+    "gulpfile.js"
+  ],
+  "authors": [
+    "Chris Beckett", "Chris Beckett <chrisb@arsnebula.com>"
+  ],
+  "homepage": "https://github.com/arsnebula/classx",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:arsnebula/classx.git"
+  }
+}

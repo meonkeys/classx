@@ -8,11 +8,18 @@ Extends JavaScript with a simple to use Class pattern.
 
 ## Setup and Configuration
 
-To begin using the library, install the package using **Bower** or **Meteor**.
+To begin using the library, install the package using **Bower** or **Meteor**:
 
 ```sh
 bower install classx
 meteor add arsnebula:classx
+```
+
+If using **Bower**, or manually deploying the library for your
+application, then add the script tag to your application:
+
+```html
+<script src="bower_components/classx/lib/js/classx.min.js"></script>
 ```
 
 ## Usage
