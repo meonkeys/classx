@@ -4,7 +4,7 @@ Extends JavaScript with a simple to use Class pattern.
 
 ## Current Version
 
-**v1.0.1**
+**v1.0.2**
 
 ## Setup and Configuration
 
@@ -43,7 +43,7 @@ console.log(new MyClass() instanceof MyClass); //=> "true"
 
 ### Public and Private Members
 
-Assign variables and methods to the ``this`` context to expose them as public, otherwise
+Bind public variables and methods to ``this``, otherwise
 they are private, and can only be accessed inside the class instance.
 
 ```js
@@ -75,7 +75,7 @@ console.log( instance.publicFunction() );
 
 ### Getter and Setters
 
-To support EcmaScript5 Getters and Setters, use ``this.getter`` and ``this.setter`` to
+To support EcmaScript5 Getters and Setters, use ``this.get`` and ``this.set`` to
 expose private variables.
 
 ```js
@@ -185,27 +185,30 @@ instance.publicMethod();
 JavaScript has a well known issue called **binding loss** that occurs when a function
 is invoked by a reference instead of through its parent object. In these situations (e.g. callbacks)
 the value of ``this`` changes. To mitigate this problem, it is recommended that you cache the
-binding of ``this`` in a local variable in the constructor. Inside any function body, use the cached
-binding of ``this`` when referencing the parent object members.
+initial value of ``this`` in a local variable in the constructor, and use it when accessing
+public variables and functions on your class to ensure the correct binding context.
 
 ```js
 var MyClass = Class.extend(function() {
 
-  var _this;
+  var _self;
 
   this.publicMethod = function(){
-     _this.publicMethod2();
+     _self.publicMethod2();
   };
 
   this.publicMethod2 = function(){
   };
 
   this.constructor = function() {
-    _this = this;
+    _self = this;
   }
 
 });
 ```
+
+> You can name the variable whatever you want. Variable names
+commonly used includg ``_this``, ``_self``.
 
 ## Attribution
 
