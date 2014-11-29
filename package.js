@@ -1,8 +1,8 @@
 Package.describe({
   "name": "arsnebula:classx",
   "summary": "Extends JavaScript with a simple to use Class pattern.",
-  "version": "1.0.0",
-  "git": "git@github.com:arsnebula/classx.git"
+  "version": "1.0.1",
+  "git": "https://github.com/arsnebula/classx.git"
 });
 
 Package.onUse(function(api) {

@@ -4,7 +4,7 @@ Extends JavaScript with a simple to use Class pattern.
 
 ## Current Version
 
-**v1.0.0**
+**v1.0.1**
 
 ## Setup and Configuration
 
