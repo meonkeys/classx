@@ -1,13 +1,14 @@
 {
   "name": "classx",
   "description": "Extends JavaScript with a simple to use Class pattern.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": [
     "lib/js/classx.min.js"
   ],
   "license": "MIT",
   "ignore": [
     "**/.*",
+    "test",
     "node_modules",
     "package.json",
     "package.js",
