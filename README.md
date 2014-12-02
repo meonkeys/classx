@@ -1,3 +1,5 @@
+[ ![Build Status](https://codeship.com/projects/a347f490-3f69-0132-5cac-7661ad9945bc/status)](https://codeship.com/projects/43615)
+
 # ClassX
 
 Extends JavaScript with a simple to use Class pattern.
