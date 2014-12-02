@@ -105,4 +105,10 @@ describe("ClassX", function() {
       evalResult.should.equal(true);
     });
   });
+  it("should fail", function() {
+    casper.then(function () {
+      var evalResult = false;
+      evalResult.should.equal(true);
+    });
+  });
 });

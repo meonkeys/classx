@@ -1,0 +1,34 @@
+#!/bin/bash
+ 
+# Create a Default Settings File (if it doesn't exist)
+if [ ! -f "settings.json" ]
+then
+  printf '{\n\t"public": {\n\t\t"env": "development"\n\t}\n}' >> settings.json
+fi
+ 
+# Set the Meteor Environment
+export ROOT_URL="http://127.0.0.1:3000"
+export BIND_IP="127.0.0.1"
+export PORT="3000"
+export MONGO_URL="mongodb://127.0.0.1:27017/${PWD##*/}"
+export NODE_ENV="development"
+export METEOR_ENV="${NODE_ENV}"
+ 
+# Drop the Mongo Database
+mongo --eval "db.dropDatabase()" > /dev/null
+ 
+# Run Meteor in the Background
+nohup meteor run --settings settings.json > .nohup.out 2>&1&
+ 
+# Wait for Meteor to Start
+while [ 1 ]; do
+    wget --quiet --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 0 --continue ${ROOT_URL} -O /dev/null
+    if [ $? = 0 ]; then break; fi; # check return value, break if successful (0)
+    sleep 2s;
+done;
+ 
+# Run our Mocha-CasperJS Tests
+mocha-casperjs
+ 
+# Stop Meteor
+ps -ef | grep meteor | grep -v grep | awk '{print $2}' | xargs kill -9
