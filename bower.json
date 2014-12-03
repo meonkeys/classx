@@ -8,11 +8,11 @@
   "license": "MIT",
   "ignore": [
     "**/.*",
-    "test",
     "node_modules",
-    "package.json",
-    "package.js",
-    "gulpfile.js"
+    "bower_components",
+    "test",
+    "tests",
+    "package.js"
   ],
   "authors": [
     "Chris Beckett", "Chris Beckett <chrisb@arsnebula.com>"
