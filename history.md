@@ -1,5 +1,8 @@
 # History
 
+## v1.1.0
+* Added support for global events
+
 ## v1.0.5
 * Added support for event listeners
 * Added tests for event listeners

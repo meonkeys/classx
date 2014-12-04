@@ -4,6 +4,9 @@ var url = env.ROOT_URL;
 describe("ClassX", function() {
   before(function() {
     casper.start(url);
+    casper.on('remote.message', function(msg) {
+        this.echo(msg);
+    })
   });
   it("should have a global Class object", function() {
     casper.then(function () {
@@ -87,17 +90,37 @@ describe("ClassX", function() {
       evalResult.should.equal(true);
     });
   });
-  it("should allow raising and listening for events", function() {
+  it("should allow raising and listening for local events", function() {
     casper.then(function () {
       casper.evaluate(function() {
+        var eventHandler = function(data) {
+          $("body").append("<div id='local-event'>" + data + "</div>");
+        }
         var myChildClass = new MyChildClass();
-        myChildClass.addEventListener("event", function(data) {
-          $("body").append("<div id='event'>" + data + "</div>");
-        });
-        var message = myChildClass.raiseEvent("event", "verify");
+        myChildClass.addEventListener("event", eventHandler, false);
+        var message = myChildClass.raiseEvent("event", "verify", false);
+        myChildClass.removeEventListener("event", eventHandler, false);
       });
-      casper.waitForSelector('#event', function() {
-        var message = this.fetchText('#event');
+      casper.waitForSelector('#local-event', function() {
+        var message = this.fetchText('#local-event');
+         message.should.equal("verify");
+      });
+    });
+  });
+  it("should allow raising and listening for global events", function() {
+    casper.then(function () {
+      casper.evaluate(function() {
+        function eventHandler(data) {
+          $("body").append("<div id='global-event'>" + data + "</div>");
+        }
+        var myClass = new MyClass();
+        var myChildClass = new MyChildClass();
+        myClass.addEventListener("event", eventHandler, true);
+        var message = myChildClass.raiseEvent("event", "verify", true);
+        myClass.removeEventListener("event", eventHandler, true);
+      });
+      casper.waitForSelector('#global-event', function() {
+        var message = this.fetchText('#global-event');
          message.should.equal("verify");
       });
     });
