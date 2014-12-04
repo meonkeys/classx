@@ -11,7 +11,7 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('clean', function(callback) {
-  del(['../lib/js/*.min.js'], callback);
+  del(['../lib/js/*.min.js'], {"force": true}, callback);
 });
 
 gulp.task('default', ['clean'], function() {

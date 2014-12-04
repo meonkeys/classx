@@ -87,4 +87,19 @@ describe("ClassX", function() {
       evalResult.should.equal(true);
     });
   });
+  it("should allow raising and listening for events", function() {
+    casper.then(function () {
+      casper.evaluate(function() {
+        var myChildClass = new MyChildClass();
+        myChildClass.addEventListener("event", function(data) {
+          $("body").append("<div id='event'>" + data + "</div>");
+        });
+        var message = myChildClass.raiseEvent("event", "verify");
+      });
+      casper.waitForSelector('#event', function() {
+        var message = this.fetchText('#event');
+         message.should.equal("verify");
+      });
+    });
+  });
 });

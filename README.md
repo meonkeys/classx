@@ -4,7 +4,7 @@ Extends JavaScript with a simple to use Class pattern.
 
 ## Current Version
 
-**v1.0.4**
+**v1.0.5**
 
 ## Setup and Configuration
 
@@ -98,6 +98,42 @@ instance.x = "some value";
 console.log(instance.x);
 //=> "some value"
 ```
+
+### Events
+
+A class includes an event system that can be used for raising events to event
+subscribers that mimics the ``addEventListener`` event system in the browser ``DOM``.
+
+#### Raising Events
+
+You raise an event in your using the ``raiseEvent`` function. If no event listeners have
+been added for the type of event, the event is simply ignored.
+
+```js
+var MyClass = Class.extend(function(){
+
+  this.constructor = function() {
+    this.raiseEvent("trace", "constructor called.");
+  }
+
+});
+```
+
+#### Adding and Remove Event Listeners
+
+To receive an event outside of a class, you add an event listener using ``addEventListener`` with
+the event name, and a callback. To remove the event listener, call the ``removeEventListener`` function.
+
+```js
+var myClass = new MyClass();
+var traceHandler = function(data) { console.log(data); }
+myClass.addEventListener("trace", traceHandler);
+myClass.removeEventListener("trace", traceHandler);
+```
+
+The event handler callback should accept a single ``data`` argument that will contain an object. The properties
+and values of the ``data`` object will be determined by the implementation of the class and
+the specific event.
 
 ### Extending a Class
 

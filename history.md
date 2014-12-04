@@ -1,5 +1,10 @@
 # History
 
+## v1.0.5
+* Added support for event listeners
+* Added tests for event listeners
+* Fixed bug with Gulp clean task in build script
+
 ## v1.0.4
 * Fixed gitignore file for meteor test harness.
 
