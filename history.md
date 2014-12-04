@@ -1,5 +1,8 @@
 # History
 
+## v1.0.4
+* Fixed gitignore file for meteor test harness.
+
 ## v1.0.3
 * Added Meteor test harness and mocha-casperjs tests.
 
