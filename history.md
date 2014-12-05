@@ -1,5 +1,11 @@
 # History
 
+## v1.2.0
+* Removed utility member for global trace event.
+
+## v1.1.1
+* Added utility member to raise global trace event.
+
 ## v1.1.0
 * Added support for global events
 

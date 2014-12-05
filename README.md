@@ -4,7 +4,7 @@ Extends JavaScript with a simple to use Class pattern.
 
 ## Current Version
 
-**v1.1.0*
+**v1.2.0**
 
 ## Setup and Configuration
 
@@ -130,7 +130,7 @@ var MyClass = Class.extend(function(){
 });
 ```
 
-#### Adding and Remove Event Listeners
+#### Event Handlers
 
 To receive an event outside of a class, you add an event listener using ``addEventListener`` with
 the following arguments:
@@ -227,7 +227,6 @@ instance.publicMethod();
 //=> "MyOtherClass publicMethod called."
 
 ```
-
 ### Managing Binding "Loss"
 
 JavaScript has a well known issue called **binding loss** that occurs when a function
