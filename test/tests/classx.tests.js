@@ -8,10 +8,18 @@ describe("ClassX", function() {
         this.echo(msg);
     })
   });
-  it("should have a global Class object", function() {
+  it("should have a global Class", function() {
     casper.then(function () {
       var evalResult = casper.evaluate(function() {
-        return ( _.isObject(Class) );
+        return ( _.isFunction(Class) );
+      });
+      evalResult.should.equal(true);
+    });
+  });
+  it("should have a global Exception class", function() {
+    casper.then(function () {
+      var evalResult = casper.evaluate(function() {
+        return ( _.isFunction(Exception) && new Exception() instanceof Exception );
       });
       evalResult.should.equal(true);
     });

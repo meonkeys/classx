@@ -1,5 +1,9 @@
 # History
 
+## v1.2.1
+* Implemented double underscore notation for super pseudo-private members.
+* Added base Exception class.
+
 ## v1.2.0
 * Removed utility member for global trace event.
 
