@@ -1,5 +1,8 @@
 # History
 
+## v1.2.2
+* Cleanup old files.
+
 ## v1.2.1
 * Implemented double underscore notation for super pseudo-private members.
 * Added base Exception class.
