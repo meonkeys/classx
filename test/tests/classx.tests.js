@@ -59,16 +59,6 @@ describe("ClassX", function() {
       evalResult.should.equal(true);
     });
   });
-  it("should allow accessing a public getter/setter", function() {
-    casper.then(function () {
-      var evalResult = casper.evaluate(function() {
-        var myClass = new MyClass();
-        myClass.settings = {"test": "verify"};
-        return ( myClass && myClass.settings && myClass.settings.test === "verify") ? true : false;
-      });
-      evalResult.should.equal(true);
-    });
-  });
   it("should allow calling a public function", function() {
     casper.then(function () {
       var evalResult = casper.evaluate(function() {

@@ -73,32 +73,6 @@ console.log( instance.publicVariable );
 console.log( instance.publicFunction() );
 ```
 
-### Getter and Setters
-
-To support EcmaScript5 Getters and Setters, use ``this.get`` and ``this.set`` to
-expose private variables.
-
-```js
-var MyClass = Class.extend(function(){
-
-  var privateVariable;
-
-  this.get("x", function() {
-    return privateVariable;
-  });
-
-  this.set("x", function(val) {
-    privateVariable = val;
-  });
-
-});
-
-var instance = new MyClass();
-instance.x = "some value";
-console.log(instance.x);
-//=> "some value"
-```
-
 ### Events
 
 A class includes an event system that can be used for raising events to event

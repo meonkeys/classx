@@ -1,5 +1,8 @@
 # History
 
+## v1.3.0
+* Removed ECMAScript5 getters/setters due to inconsistent behaviors.
+
 ## v1.2.2
 * Cleanup old files.
 

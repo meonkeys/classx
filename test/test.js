@@ -2,18 +2,13 @@ MyClass = Class.extend(function() {
   var _self, _settings;
   var _type = "MyClass";
   this.value = 44;
-  this.get("settings", function() {
-    return _settings;
-  });
-  this.set("settings", function(val) {
-    _settings = val;
-  });
+  this.settings = null;
   this.echo = function(message) {
     return _type + ": " + message;
   }
   this.constructor = function(settings) {
     _self = this;
-    _settings = settings;
+    _self.settings = settings;
   }
 });
 
@@ -39,5 +34,5 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
-  });
+ });
 }
