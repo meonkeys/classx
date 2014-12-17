@@ -5,85 +5,111 @@ describe("ClassX", function() {
   before(function() {
     casper.start(url);
     casper.on('remote.message', function(msg) {
-        this.echo(msg);
+        //this.echo(msg);
     })
   });
-  it("should have a global Class", function() {
+  it("should have a global namespace", function() {
     casper.then(function () {
       var evalResult = casper.evaluate(function() {
-        return ( _.isFunction(Class) );
+        return {
+          "hasNamespace": ( typeof ClassX === 'object' ),
+          "hasExtend": ( ClassX && typeof ClassX.extend === 'function'),
+          "hasClass": ( ClassX && typeof ClassX.Class === 'function'),
+          "hasException": ( ClassX && typeof ClassX.Exception === 'function')
+        }
+      });
+      evalResult.hasNamespace.should.equal(true);
+      evalResult.hasExtend.should.equal(true);
+      evalResult.hasClass.should.equal(true);
+      evalResult.hasException.should.equal(true);
+    });
+  });
+  it("should allow creating an instance with a proper type and constructor name", function() {
+    casper.then(function () {
+      var evalResult = casper.evaluate(function() {
+        var myClass= new MyClass();
+        return ( myClass && myClass instanceof MyClass && myClass.constructor.name === "MyClass");
       });
       evalResult.should.equal(true);
     });
   });
-  it("should have a global Exception class", function() {
+  it("should support instanceof operator and prototype chaining", function() {
     casper.then(function () {
       var evalResult = casper.evaluate(function() {
-        return ( _.isFunction(Exception) && new Exception() instanceof Exception );
+        var myGrandChild = new MyGrandChild();
+        return (
+          myGrandChild instanceof MyGrandChild &&
+          myGrandChild instanceof MyChild &&
+          myGrandChild instanceof MyClass &&
+          myGrandChild instanceof ClassX.Class
+        )
       });
       evalResult.should.equal(true);
     });
   });
-  it("should allow extending a new type", function() {
+
+  it("should allow access to base class", function() {
     casper.then(function () {
       var evalResult = casper.evaluate(function() {
-        return ( MyClass && _.isObject(MyClass) );
+        var myGrandChild = new MyGrandChild();
+        var myChild = new MyChild();
+        var myClass = new MyClass();
+        return {
+          "myGrandChild": ( myGrandChild && myGrandChild.parent && myGrandChild.parent === "MyChild"),
+          "myChild": ( myChild && myChild.parent && myChild.parent === "MyClass"),
+          "myClass": ( myClass && myClass.parent && myClass.parent === "Class"),
+        }
+      });
+      evalResult.myGrandChild.should.equal(true);
+      evalResult.myChild.should.equal(true);
+      evalResult.myClass.should.equal(true);
+    });
+  });
+  it("should allow accessing a getter/setter property across inheritance chain", function() {
+    casper.then(function () {
+      var evalResult = casper.evaluate(function() {
+        var now = new Date();
+        var myClass = new MyClass();
+        var myChild = new MyChild();
+        myClass.created = now;
+        return ( myChild.created === now );
       });
       evalResult.should.equal(true);
     });
   });
-  it("should allow creating a new instance", function() {
+  it("should allow setting a public variable", function() {
     casper.then(function () {
       var evalResult = casper.evaluate(function() {
         var myClass = new MyClass();
-        return ( myClass && _.isObject(myClass) && myClass instanceof MyClass);
+        myClass.test = "verify";
+        return ( myClass && myClass.test && myClass.test === "verify" ) ? true : false;
       });
       evalResult.should.equal(true);
     });
   });
-  it("should allow accessing a public variable", function() {
+  it("should allow calling a public function across inheritance chain", function() {
     casper.then(function () {
       var evalResult = casper.evaluate(function() {
+        var myGrandChild = new MyGrandChild();
+        var myChild = new MyChild();
         var myClass = new MyClass();
-        return ( myClass && myClass.value && myClass.value === 44) ? true : false;
+        return {
+          "helloGrandChild": myGrandChild.sayHello(),
+          "helloChild": myChild.sayHello(),
+          "helloClass": myClass.sayHello()
+        }
       });
-      evalResult.should.equal(true);
-    });
-  });
-  it("should allow overriding a public variable", function() {
-    casper.then(function () {
-      var evalResult = casper.evaluate(function() {
-        var myChildClass = new MyChildClass();
-        return ( myChildClass && myChildClass.value && myChildClass.value === 88) ? true : false;
-      });
-      evalResult.should.equal(true);
-    });
-  });
-  it("should allow calling a public function", function() {
-    casper.then(function () {
-      var evalResult = casper.evaluate(function() {
-        var myClass = new MyClass();
-        var message = myClass.echo("verify");
-        return ( message && message === "MyClass: verify") ? true : false;
-      });
-      evalResult.should.equal(true);
-    });
-  });
-  it("should allow calling the super constructor", function() {
-    casper.then(function () {
-      var evalResult = casper.evaluate(function() {
-        var myChildClass = new MyChildClass({"test": "verify"});
-        return ( myChildClass.settings.test === "verify") ? true : false;
-      });
-      evalResult.should.equal(true);
+      evalResult.helloGrandChild.should.equal("My name is MyGrandChild");
+      evalResult.helloChild.should.equal("My name is MyChild");
+      evalResult.helloClass.should.equal("My name is MyClass");
     });
   });
   it("should allow method overloading", function() {
     casper.then(function () {
       var evalResult = casper.evaluate(function() {
-        var myChildClass = new MyChildClass();
-        var message = myChildClass.echo("verify");
-        return ( message && message === "MyClass: MyChildClass: verify") ? true : false;
+        var myGrandChild = new MyGrandChild();
+        var message = myGrandChild.echo("Hello");
+        return ( message && message === "MyClass: MyChild: MyGrandChild: Hello") ? true : false;
       });
       evalResult.should.equal(true);
     });
@@ -94,10 +120,10 @@ describe("ClassX", function() {
         var eventHandler = function(data) {
           $("body").append("<div id='local-event'>" + data + "</div>");
         }
-        var myChildClass = new MyChildClass();
-        myChildClass.addEventListener("event", eventHandler, false);
-        var message = myChildClass.raiseEvent("event", "verify", false);
-        myChildClass.removeEventListener("event", eventHandler, false);
+        var myChild = new MyChild();
+        myChild.addEventListener("event", eventHandler, false);
+        var message = myChild.raiseEvent("event", "verify", false);
+        myChild.removeEventListener("event", eventHandler, false);
       });
       casper.waitForSelector('#local-event', function() {
         var message = this.fetchText('#local-event');
@@ -112,9 +138,9 @@ describe("ClassX", function() {
           $("body").append("<div id='global-event'>" + data + "</div>");
         }
         var myClass = new MyClass();
-        var myChildClass = new MyChildClass();
+        var myChild = new MyChild();
         myClass.addEventListener("event", eventHandler, true);
-        var message = myChildClass.raiseEvent("event", "verify", true);
+        var message = myChild.raiseEvent("event", "verify", true);
         myClass.removeEventListener("event", eventHandler, true);
       });
       casper.waitForSelector('#global-event', function() {

@@ -4,7 +4,7 @@ Extends JavaScript with a simple to use Class pattern.
 
 ## Current Version
 
-**v1.2.2**
+**v2.0.0**
 
 ## Setup and Configuration
 
@@ -24,54 +24,161 @@ application, then add the script tag to your application:
 
 ## Usage
 
-### Creating a Class
+### Getting Started
 
-To create your first class, use ``Class.extend``. Each class can have
-a single public ``constructor``. The constructor can also take any
-arguments that you want to pass into a new class instance.
+The core namespace closure for the package is ``ClassX``. The core functionality
+is provided by the ``extend`` method that is used support a
+**classical inheritance** pattern.
+
+The ``extend`` method takes two parameters:
+
+- **base**: An existing object that will become the base class.
+- **extensions**: A closure function containing method extensions.
+
+The method returns a new object.
 
 ```js
-var MyClass = Class.extend(function(){
-  // classes can have constructors
-  this.constructor = function(){
-    // ...
+var MyClass = ClassX.extend( Object, function(base) {
+  this.constructor = function MyClass() {
+    console.log(this.constructor.name); // ==> "MyClass"
+  }
+});
+
+var MyChild = ClassX.extend( MyClass, function(base) {
+  this.constructor = function MyChild() {
+    if ( base && base.constructor ) base.constructor());
+    console.log(this.constructor.name); // ==> "MyChild"
+  }
+});
+```
+
+> The extend member will also setup the prototypal chain to correctly support the
+``instanceof`` operator.
+
+```js
+var myInstance = new MyChild();
+console.log(myInstance instanceof Object);    // ==> true
+console.log(myInstance instanceof MyClass);   // ==> true
+```
+
+### Creating a Class
+
+A class can be created by extending from any existing object, or extended
+from the native JavaScript ``Object``. An instance of the base class is provided
+as a argument to the ``function`` passed to the ``extend`` method. This can be
+used to access the inheritance chain of methods.
+
+```js
+var MyClass = ClassX.extend( Object, function(base) {
+  this.constructor = function MyClass() {
+    if ( base && base.constructor )  base.constructor();
+  };
+});
+```
+
+The package includes two pre-defined base classes, ``ClassX.Class`` and ``ClassX.Exception`` that can be
+used to create custom classes and exceptions respectively.
+
+```js
+var MyClass = ClassX.extend( ClassX.Class, function(base) {
+  this.constructor = function MyClass() {
+    if ( base && base.constructor )  base.constructor();
   };
 });
 
-console.log(new MyClass() instanceof MyClass); //=> "true"
+var MyException = ClassX.extend( ClassX.Exception, function(base) {
+  this.constructor = function MyException() {
+    if ( base && base.constructor )  base.constructor();
+  }
+});
+
 ```
 
-### Public and Private Members
+### Constructors
 
-Bind public variables and methods to ``this``, otherwise
-they are private, and can only be accessed inside the class instance.
+Every class must contain a ``constructor`` method. Common activities performed in the constructor
+including invoking the base class constructor, and initializing properties
+on the class instance.
 
 ```js
-var MyClass = Class.extend(function(){
-
-  // private variable
-  var privateVariable = "private variable";
-
-  // private function
-  var privateFunction = function() {
-    console.log("Private function called.");
+var MyClass = ClassX.extend( ClassX.Class, function(base) {
+  // declare a named function for the constructor
+  this.constructor = function MyClass() {
+    // invoke a base constructor if present
+    if ( base && base.constructor ) base.constructor();
+    // initialize properties
+    this.prop1 = ...;
   }
+});
+```
 
-  // public variable
-  this.publicVariable = "public variable";
+To provide access to the inheritance chain, a reference to the
+base object is passed as an argument to
+the enclosing function containing the extension methods. This can be used to
+invoke the base objects constructor if it exists.
 
-  // public function
-  this.publicFunction = function() {
-    console.log("Public function called.");
+### Properties
+
+Properties can be defined with three scopes depending on how they are implemented:
+
+- **private**: private properties or variables are only availabe within the class
+- **shared**: shared properties share their value across all instances of a class
+- **public**: public property values are specific to each instance of a class.
+
+```js
+var MyClass = ClassX.extend( ClassX.Class, function(base) {
+
+  // private properties are internal to a class
+  var privateProperty = "private property";
+
+  // **WARNING** a shared property value is shared across all instances of a class
+  this.sharedProperty = "shared property";
+
+  this.constructor = function MyClass() {
+    // a public property value is unique for each instance of a class
+    // and must be set in the constructor
+    this.publicProperty = "public property";
   }
 
 });
 
-// public members can be accessed outside the class
-var instance = new MyClass();
-console.log( instance.publicVariable );
-console.log( instance.publicFunction() );
+### Methods
+
+Methods can be public or private.
+
+```js
+var MyClass = ClassX.extend( ClassX.Class, function(base) {
+  // private methods are only available within the class
+  var privateMethod = function() {
+    // do something
+  }
+  // public methods are available anywhere
+  this.publicMethod = function() {
+    // do something
+  }
+}
+});
 ```
+
+### Getter/Setters
+
+ECMAScript5 introduced getter/setter properties that allow get and set functions
+to wrap an internal variable, but behave the same as simple types.
+
+```js
+var MyClass = ClassX.extend( ClassX.Class, function(base) {
+  var _setting = "setting";
+  Object.defineProperty(this, 'setting', {
+    get: function() { return _setting; },
+    set: function(val) { _setting = val; },
+    enumerable: true,
+    configurable: true
+  });
+});
+```
+
+> Since getters and setters often wrap private properties, be aware that all classes
+extend from this base will get or set the same value.
 
 ### Events
 
@@ -85,7 +192,7 @@ a ``global`` argument set to ``true`` on event functions.
 
 #### Raising Events
 
-You raise an event in your using the ``raiseEvent`` function. If no event listeners have
+You raise an event in your class using the ``raiseEvent`` function. If no event listeners have
 been added for the type of event, the event is simply ignored.
 
 The ``raiseEvent`` function takes the following parameters:
@@ -97,7 +204,7 @@ The ``raiseEvent`` function takes the following parameters:
 The following demonstrates raising an event within a class instance:
 
 ```js
-var MyClass = Class.extend(function(){
+var MyClass = ClassX.extend( ClassX.Class, function(base){
   this.constructor = function() {
     this.raiseEvent(event, data, global);
   }
@@ -123,118 +230,6 @@ myClass.removeEventListener(event, handler, global);
 ```
 
 To remove the event listener, call the ``removeEventListener`` function.
-
-### Extending a Class
-
-A class can extend another class using the ``extend`` method. Public
-members on the base class are automatically available on your extended
-class instances.
-
-```js
-var MyClass = Class.extend(function(){
-  this.publicVariable = "public variable";
-});
-
-var MyChildClass = MyClass.extend(function() {
-});
-
-var instance = new MyChildClass();
-console.log(instance.publicVariable);
-//=> "public variable"
-```
-
-### Super Constructors
-
-When extending a class, you can execute the constructor of an extended
-class using the ``this.super``.
-
-```js
-var MyClass = Class.extend(function(){
-
-  this.constructor = function() {
-    console.log("MyClass constructor called.");
-  }
-
-});
-
-var MyChildClass = MyClass.extend(function() {
-
-  this.constructor = function() {
-    this.super();
-    console.log("MyChildClass constructor called.");
-  }
-
-});
-
-var instance = new MyChildClass();
-//=> "MyClass constructor called."
-//=> "MyOtherClass constructor called."
-```
-
-### Method Overloading
-
-Any method can be overloaded when extending a class. Similar to overloading
-the constructor, use ``this.super`` to access the base class, and any public
-members defined on it.
-
-```js
-var MyClass = Class.extend(function() {
-
-  this.publicMethod = function(){
-     console.log("MyClass publicMethod called.");
-  };
-
-});
-
-var MyOtherClass = MyClass.extend( function(){
-
-  this.publicMethod = function() {
-    this.super.publicMethod();
-    console.log("MyOtherClass publicMethod called.");
-  };
-
-});
-
-var instance = new MyChildClass();
-instance.publicMethod();
-//=> "MyClass publicMethod called."
-//=> "MyOtherClass publicMethod called."
-
-```
-### Managing Binding "Loss"
-
-JavaScript has a well known issue called **binding loss** that occurs when a function
-is invoked by a reference instead of through its parent object. In these situations (e.g. callbacks)
-the value of ``this`` changes. To mitigate this problem, it is recommended that you cache the
-initial value of ``this`` in a local variable in the constructor, and use it when accessing
-public variables and functions on your class to ensure the correct binding context.
-
-```js
-var MyClass = Class.extend(function() {
-
-  var _self;
-
-  this.publicMethod = function(){
-     _self.publicMethod2();
-  };
-
-  this.publicMethod2 = function(){
-  };
-
-  this.constructor = function() {
-    _self = this;
-  }
-
-});
-```
-
-> You can name the variable whatever you want. Variable names
-commonly used includg ``_this``, ``_self``.
-
-## Attribution
-
-This package was based on the [ExtendJS](http://extendjs.org/) JavaScript library
-licensed under [MIT](http://choosealicense.com/licenses/mit/).
 
 ## License
 
