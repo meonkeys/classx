@@ -4,7 +4,7 @@ Extends JavaScript with a simple to use Class pattern.
 
 ## Current Version
 
-**v2.0.0**
+**v2.0.1**
 
 ## Setup and Configuration
 
@@ -26,55 +26,50 @@ application, then add the script tag to your application:
 
 ### Getting Started
 
-The core namespace closure for the package is ``ClassX``. The core functionality
+The namespace for the package is ``ClassX``. The core functionality
 is provided by the ``extend`` method that is used support a
 **classical inheritance** pattern.
 
 The ``extend`` method takes two parameters:
 
-- **base**: An existing object that will become the base class.
-- **extensions**: A closure function containing method extensions.
+- **object**: An object that will become the base class.
+- **extensions**: A function enclosing additional methods to extend the base class.
 
-The method returns a new object.
+The ``extend`` method returns a new object.
 
 ```js
-var MyClass = ClassX.extend( Object, function(base) {
+var MyClass = ClassX.extend( Object, function() {
   this.constructor = function MyClass() {
-    console.log(this.constructor.name); // ==> "MyClass"
+    console.log(this.constructor.name); //=> "MyClass"
   }
 });
+```
+As demonstrated above, if you provide a **named** function for the constructor,
+you will be able to get the constructor name from the context.
 
+```js
 var MyChild = ClassX.extend( MyClass, function(base) {
   this.constructor = function MyChild() {
     if ( base && base.constructor ) base.constructor());
-    console.log(this.constructor.name); // ==> "MyChild"
+    console.log(this.constructor.name); //=> "MyChild"
   }
 });
 ```
 
-> The extend member will also setup the prototypal chain to correctly support the
-``instanceof`` operator.
+The ``extend`` function passes the base class as an argument to the ``extensions``
+function. To access the base class, either provide a named argument, or
+use the JavaScript ``arguments[0]`` array.
 
 ```js
 var myInstance = new MyChild();
-console.log(myInstance instanceof Object);    // ==> true
-console.log(myInstance instanceof MyClass);   // ==> true
+console.log(myInstance instanceof Object);    //=> true
+console.log(myInstance instanceof MyClass);   //=> true
 ```
 
-### Creating a Class
+As shown above, the extend member will also setup the prototypal chain to correctly support the
+``instanceof`` operator.
 
-A class can be created by extending from any existing object, or extended
-from the native JavaScript ``Object``. An instance of the base class is provided
-as a argument to the ``function`` passed to the ``extend`` method. This can be
-used to access the inheritance chain of methods.
-
-```js
-var MyClass = ClassX.extend( Object, function(base) {
-  this.constructor = function MyClass() {
-    if ( base && base.constructor )  base.constructor();
-  };
-});
-```
+### Base Classes
 
 The package includes two pre-defined base classes, ``ClassX.Class`` and ``ClassX.Exception`` that can be
 used to create custom classes and exceptions respectively.
@@ -94,6 +89,24 @@ var MyException = ClassX.extend( ClassX.Exception, function(base) {
 
 ```
 
+The ``ClassX.Exception`` class extends the native JavaScript ``Error`` object and provides the
+common cross-browser properties including:
+
+- **name**: the constructor name.
+- **type**: also set to the constructor name.
+- **message**: the error message.
+- **stack**: the stack trace if available.
+
+> It is important to use a **named** function for the constructor in order to properly
+set the name and type properties on the new object.
+
+```js
+var myException = new ClassX.Exception("Some exception.");
+console.log(myException instanceof Error);              //=> true
+console.log(myException instanceof ClassX.Exception);   //=> true
+console.log(myException.name === "MyException")         //=> true
+```
+
 ### Constructors
 
 Every class must contain a ``constructor`` method. Common activities performed in the constructor
@@ -111,11 +124,6 @@ var MyClass = ClassX.extend( ClassX.Class, function(base) {
   }
 });
 ```
-
-To provide access to the inheritance chain, a reference to the
-base object is passed as an argument to
-the enclosing function containing the extension methods. This can be used to
-invoke the base objects constructor if it exists.
 
 ### Properties
 
@@ -141,6 +149,7 @@ var MyClass = ClassX.extend( ClassX.Class, function(base) {
   }
 
 });
+```
 
 ### Methods
 

@@ -1,5 +1,8 @@
 # History
 
+## v2.0.1
+* Updated README.
+
 ## v2.0.0
 * Complete overhaul of extend code. Now uses much simpler inheritance pattern.
 * Implemented ClassX namespace for base classes.
