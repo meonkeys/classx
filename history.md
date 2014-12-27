@@ -1,5 +1,8 @@
 # History
 
+## v2.0.2
+* Updated gulp build file and added dist folder.
+
 ## v2.0.1
 * Updated README.
 

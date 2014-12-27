@@ -4,7 +4,7 @@ Extends JavaScript with a simple to use Class pattern.
 
 ## Current Version
 
-**v2.0.1**
+**v2.0.2**
 
 ## Setup and Configuration
 
@@ -19,14 +19,14 @@ If using **Bower**, or manually deploying the library for your
 application, then add the script tag to your application:
 
 ```html
-<script src="bower_components/classx/lib/js/classx.min.js"></script>
+<script src="bower_components/classx/dist/js/classx.min.js"></script>
 ```
 
 ## Usage
 
 ### Getting Started
 
-The namespace for the package is ``ClassX``. The core functionality
+The main entry point for the package is the ``ClassX`` object. The core functionality
 is provided by the ``extend`` method that is used support a
 **classical inheritance** pattern.
 
@@ -50,7 +50,7 @@ you will be able to get the constructor name from the context.
 ```js
 var MyChild = ClassX.extend( MyClass, function(base) {
   this.constructor = function MyChild() {
-    if ( base && base.constructor ) base.constructor());
+    if ( base && base.constructor ) base.constructor.call(this));
     console.log(this.constructor.name); //=> "MyChild"
   }
 });
@@ -77,13 +77,13 @@ used to create custom classes and exceptions respectively.
 ```js
 var MyClass = ClassX.extend( ClassX.Class, function(base) {
   this.constructor = function MyClass() {
-    if ( base && base.constructor )  base.constructor();
+    if ( base && base.constructor )  base.constructor.call(this);
   };
 });
 
 var MyException = ClassX.extend( ClassX.Exception, function(base) {
   this.constructor = function MyException() {
-    if ( base && base.constructor )  base.constructor();
+    if ( base && base.constructor )  base.constructor.call(this);
   }
 });
 
@@ -118,7 +118,7 @@ var MyClass = ClassX.extend( ClassX.Class, function(base) {
   // declare a named function for the constructor
   this.constructor = function MyClass() {
     // invoke a base constructor if present
-    if ( base && base.constructor ) base.constructor();
+    if ( base && base.constructor ) base.constructor.call(this);
     // initialize properties
     this.prop1 = ...;
   }
@@ -127,25 +127,31 @@ var MyClass = ClassX.extend( ClassX.Class, function(base) {
 
 ### Properties
 
-Properties can be defined with three scopes depending on how they are implemented:
+Properties have diffrent visibility and scope depending on how they are implemented:
 
-- **private**: private properties or variables are only availabe within the class
 - **shared**: shared properties share their value across all instances of a class
 - **public**: public property values are specific to each instance of a class.
 
 ```js
 var MyClass = ClassX.extend( ClassX.Class, function(base) {
 
-  // private properties are internal to a class
-  var privateProperty = "private property";
+  // **WARNING** a private shared property is shared across all instances of classes
+  // but only accessible to methods within this closure
+  var privateSharedProperty = "private shared property";
 
-  // **WARNING** a shared property value is shared across all instances of a class
-  this.sharedProperty = "shared property";
+  // **WARNING** a public shared property value is shared across all instances of a class
+  this.publicSharedProperty = "public shared property";
 
   this.constructor = function MyClass() {
+
+    // var private property will be unique for each instance of a class
+    // but is only accessible within the constructor
+    var privateProperty = "private property";
+
     // a public property value is unique for each instance of a class
     // and must be set in the constructor
     this.publicProperty = "public property";
+
   }
 
 });
@@ -157,17 +163,24 @@ Methods can be public or private.
 
 ```js
 var MyClass = ClassX.extend( ClassX.Class, function(base) {
-  // private methods are only available within the class
+  // private methods are only available within this closure
   var privateMethod = function() {
     // do something
   }
   // public methods are available anywhere
   this.publicMethod = function() {
     // do something
+    privateMethod.call(this);
   }
 }
 });
 ```
+
+Private methods do not have any binding concept, or intrinsically have
+access to properties or methods stored on ``this``. To provide them access
+to class instance properties or prototype methods, you need to provide them
+a binding context when they are called using the JavaScript
+function ``.call()`` extension.
 
 ### Getter/Setters
 
