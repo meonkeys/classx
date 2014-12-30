@@ -10,10 +10,10 @@ MyClass = ClassX.extend(ClassX.Class, function(base) {
     return "My name is " + this.type;
   }
   this.echo = function(message) {
-    return this.type + ": " + message;
+    return "MyClass: " + message;
   }
   this.constructor = function MyClass() {
-    console.log("constructor " + this.constructor.name + " called.");
+    base.constructor.call(this);
     this.type = this.constructor.name;
     this.parent = base.constructor.name;
     this.created = new Date();
@@ -22,11 +22,10 @@ MyClass = ClassX.extend(ClassX.Class, function(base) {
 
 MyChild = ClassX.extend(MyClass, function(base) {
   this.echo = function(message) {
-    return base.echo(this.type + ": " + message);
+    return base.echo("MyChild: " + message);
   }
   this.constructor = function MyChild() {
-    console.log("constructor " + this.constructor.name + " called.");
-    if ( base && base.constructor ) base.constructor();
+    base.constructor.call(this);
     this.type = this.constructor.name;
     this.parent = base.constructor.name;
   }
@@ -34,19 +33,18 @@ MyChild = ClassX.extend(MyClass, function(base) {
 
 MyGrandChild = ClassX.extend(MyChild, function(base) {
   this.echo = function(message) {
-    return base.echo(this.type + ": " + message);
+    return base.echo("MyGrandChild: " + message);
   }
   this.constructor = function MyGrandChild() {
-    console.log("constructor " + this.constructor.name + " called.");
-    if ( base && base.constructor ) base.constructor();
+    base.constructor.call(this);
     this.type = this.constructor.name;
     this.parent = base.constructor.name;
   }
 });
 
 MyException = ClassX.extend(ClassX.Exception, function(base) {
-  this.constructor = function MyException() {
-    base.constructor.call(this, arguments);
+  this.constructor = function MyException(message) {
+    base.constructor.call(this, message);
   }
 });
 
@@ -59,12 +57,5 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
-    var myGrandChild = new MyGrandChild();
-    var myChild = new MyChild();
-    var myClass = new MyClass();
-    console.log(myGrandChild.echo("Hello"));
-    console.log(myGrandChild.parent);
-    console.log(myChild.parent);
-    console.log(myClass.parent);
   });
 }

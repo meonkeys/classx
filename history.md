@@ -1,5 +1,8 @@
 # History
 
+## v2.0.3
+* Added collection of standard argument exceptions.
+
 ## v2.0.2
 * Updated gulp build file and added dist folder.
 

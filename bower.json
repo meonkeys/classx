@@ -1,7 +1,7 @@
 {
   "name": "classx",
   "description": "Extends JavaScript with a simple to use Class pattern.",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "main": [
     "lib/js/classx.min.js"
   ],
@@ -11,9 +11,7 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests",
     "docs",
-    "doc",
     "lib",
     "package.js"
   ],

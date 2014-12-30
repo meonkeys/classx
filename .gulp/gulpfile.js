@@ -6,7 +6,8 @@ var gulp = require('gulp'),
 
 gulp.task('scripts', function() {
   return gulp.src([
-    "../lib/js/classx.js"
+    "../lib/js/classx.js",
+    "../lib/js/classx.argument.exceptions.js"
     ], {"base": "../lib/js/"})
     .pipe(concat('classx.js'))
     .pipe(gulp.dest('../dist/js'))
