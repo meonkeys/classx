@@ -1,5 +1,8 @@
 # History
 
+## v2.0.4
+* Added support for Shippable CI.
+
 ## v2.0.3
 * Added collection of standard argument exceptions.
 

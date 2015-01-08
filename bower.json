@@ -1,7 +1,7 @@
 {
   "name": "classx",
   "description": "Extends JavaScript with a simple to use Class pattern.",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "main": [
     "lib/js/classx.min.js"
   ],
@@ -13,7 +13,8 @@
     "test",
     "docs",
     "lib",
-    "package.js"
+    "package.js",
+    "shippable.yml"
   ],
   "authors": [
     "Chris Beckett", "Chris Beckett <chrisb@arsnebula.com>"
