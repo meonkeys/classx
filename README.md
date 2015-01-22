@@ -56,6 +56,8 @@ var MyChild = ClassX.extend( MyClass, function(base) {
 });
 ```
 
+Caution: `this.constructor.name` is [experimental](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name) and will likely fail in some web browsers. Additionally, [minification may mangle `this.constructor.name`](https://github.com/jashkenas/coffeescript/issues/2052).
+
 The ``extend`` function passes the base class as an argument to the ``extensions``
 function. To access the base class, either provide a named argument, or
 use the JavaScript ``arguments[0]`` array.
